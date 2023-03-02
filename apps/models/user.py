@@ -14,3 +14,6 @@ def create_(username,email,password):
     else:  
         oldUser = User.query.order_by(desc('id')).first()#從小排到大的第一個去
         user=User(id=oldUser.id+1,username=username,email=email,password=password)#再傳到views->create(呈現畫面後)傳到model(處理資料)->存到User(上方的class user)資料結構後給這裡
+        db.session.add(user)
+        db.session.commit()
+        return
