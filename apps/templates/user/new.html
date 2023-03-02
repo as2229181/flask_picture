@@ -1,0 +1,11 @@
+{% extends "user/layout.html" %}
+
+{% block body %}
+<form action="/create" method="post" >
+    <input type="text" class="form-control" placeholder="username" aria-label="username" name="username" aria-describedby="button-addon2"></br>
+    <input type="email" class="form-control" placeholder="email" aria-label="email" name="email" aria-describedby="button-addon2"></br>
+    <input type="password" class="form-control" placeholder="password" aria-label="password" name="passowrd" aria-describedby="button-addon2"></br>
+    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">submit</button></br>
+</form>
+
+{% endblock %}
