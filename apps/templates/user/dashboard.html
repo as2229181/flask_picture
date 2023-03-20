@@ -22,7 +22,7 @@
                 Dropdown
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="{{url_for('upload_photos')}}">Upload photo</a></li>
                 <li><a class="dropdown-item" href="#">Another action</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -82,6 +82,7 @@
                                         <br>
                                             <a class="btn btn-outline-primary" href="url_for('logout')">Logout</a>
                                             <a class="btn btn-outline-primary" href="/update/{{ current_user.id }}">Edit user data</a>
+                                            <a class="btn btn-outline-danger" href="/delete/{{ current_user.id }}">Delete user </a>
                                     </ul>
                                     <ul class="social-icon-style1 list-unstyled mb-0 ps-0">
                                         <li><a href="#!"><i class="ti-twitter-alt"></i></a></li>

@@ -1,10 +1,10 @@
 from flask import render_template,request,flash,redirect,url_for
-from apps.models.user import User,create_,update_,delete_,create_post_,show_post_,show_post_id,Posts,edit_post_id,check_password_hash
-from apps.views.form import NewUserForm,PostForm,LoginForm
+from apps.models.user import User,create_,update_,delete_,create_post_,show_post_,show_post_id,Posts,edit_post_id,check_password_hash,Photos
+from apps.views.form import NewUserForm,PostForm,LoginForm,PhotosForm
 from flask_sqlalchemy import query
-from .. import db,login_manager
+from .. import db,login_manager,app,photos
+from flask_uploads import UploadSet,configure_uploads,IMAGES
 from flask_login import login_user,LoginManager,login_required,logout_user,current_user
-
 
 
 class views:
@@ -131,7 +131,22 @@ class views:
             flash("You can't delete the post,you are not the author!!!!!")
             posts=Posts.query.order_by(Posts.date_posted).all()
             return render_template("user/show-post.html",posts=posts)
-            
+    @staticmethod
+    def Upload_photo():
+        upload_photos=Photos.query.order_by(Photos.id) 
+        form=PhotosForm()
+        if request.method=='POST':
+            Name=form.Name.data
+            Description=form.Description.data
+            Filename=photos.save(request.files['photo'])
+            Image_path=photos.url(Filename)
+            photo=Photos(Name=Name,Description=Description,Filename=Filename,Image_path=Image_path)
+            db.session.add(photo)
+            db.session.commit()
+            flash("Upload successfully!!!!")
+            return redirect(url_for("upload_photos"))
+           
+        return render_template("user/upload_image.html",form=form,upload_photos=upload_photos)     
         
             
        

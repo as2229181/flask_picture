@@ -59,8 +59,8 @@ class Posts(db.Model):
     #ForeignKey to link users(refer to primary key to the user)
     poster_id=db.Column(db.Integer,db.ForeignKey("user.id"))
 
-def create_post_(title,content,poster,slug,About_me):
-    post=Posts(title=title,content=content,poster_id=poster,slug=slug,About_me=About_me)
+def create_post_(title,content,poster,slug):
+    post=Posts(title=title,content=content,poster_id=poster,slug=slug)
     db.session.add(post)
     db.session.commit()
     return
@@ -77,3 +77,12 @@ def edit_post_id(post):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.filter_by(id=user_id).first()
+
+
+class Photos(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    Name=db.Column(db.String(128),nullable=False)
+    Filename=db.Column(db.String(128),nullable=False)
+    Description=db.Column(db.String(500),nullable=False)
+    Upload_time=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
+    Image_path=db.Column(db.String(100),nullable=False)

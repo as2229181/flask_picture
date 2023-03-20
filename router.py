@@ -132,6 +132,11 @@ def edit_post_id(id):
 def delete_post_id(id):
     return views.Delete_post_id(id)
 
+
+@app.route("/photo_uploads",methods=["GET","POST"])
+def upload_photos():
+    return views.Upload_photo()
+
 @app.route("/admin")
 @login_required
 def admin():# 只能給superuser使用的頁面 去管理使用者?

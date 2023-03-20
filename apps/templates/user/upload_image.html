@@ -1,7 +1,6 @@
 {% extends "user/layout.html" %}
 
 {% block body %}
-
 <header>
     <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container-fluid">
@@ -19,11 +18,11 @@
               </li>
               <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
+                  post
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{{url_for('upload_photos')}}">Upload photo</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('upload_photos')}}">Upload photo</a></li>
+                  <li><a class="dropdown-item" href="#">nothing</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#">Something else here</a></li>
                 </ul>
@@ -32,10 +31,10 @@
                 <a class="nav-link text-white" href="{{url_for('show_post') }}" >Show_post</a>
               </li>
               {% if current_user.id==1 %}
-            <li class="nav-item  ">
-              <a class="nav-link text-white" href="{{url_for('admin') }}" >Admin</a>
-            </li>
-            {% endif %}
+              <li class="nav-item  ">
+                <a class="nav-link text-white" href="{{url_for('admin') }}" >Admin</a>
+              </li>
+              {% endif %}
             </ul>
             <form method="post" action="{{ url_for('search') }}" class="d-flex" >
               {{form.hidden_tag()}}
@@ -49,32 +48,29 @@
         </div>
       </nav>
     </header>
-    <footer class="p-3 m-0 border-0 bd-example">
-      {% for message in get_flashed_messages() %}
-      <div class="alert alert-info alert-dismissible fade show" role="alert">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
       {{message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      {% endfor %}
-      </div>
-      <h1>Edit post</h1> 
-      </br>
-      <form  method="POST" >
-              {{form.hidden_tag()}}
-              {{form.title.label(class="form-label")}}
-              {{form.title(class="form-control")}}   
-              </br>
-              {{form.content.label(class="form-label")}}
-              {{form.content(class="form-control")}}
-              </br>
-           
-              {{form.slug.label(class="form-label")}}
-              {{form.slug(class="form-control")}}
-              </br>
-              {{form.Submit(class="btn btn-secondary")}}
-        </form>
-        {{ ckeditor.load() }}
-        {{ ckeditor.config(name='content') }}
-
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <h1>Upload photos</h1>
+</br>        
+    <form  method="post"  enctype="multipart/form-data" }}">
+        {{form.hidden_tag()}}
+        {{form.Name.label(class="form-label")}}
+        {{form.Name(class="form-control")}}
+        </br>
+        {{form.Description.label(class="form-label")}}
+        {{form.Description(class="form-control")}}
+        </br>
+        {{form.Photo.label(class="form-label")}}
+        {{form.Photo(class="form-control")}}
+        </br>
+        
+        {{form.Submit(class="btn btn-secondary")}}   
+    </form>
+    
 
 
 {% endblock %}

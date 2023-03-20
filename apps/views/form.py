@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField,FileAllowed,FileRequired
 from wtforms import StringField,SubmitField,PasswordField,validators,TextAreaField
 from wtforms.validators import DataRequired,EqualTo
 from wtforms.widgets import TextArea
 from flask_ckeditor import CKEditorField
+from flask_uploads import IMAGES
 
 class NewUserForm(FlaskForm):
     name=StringField("Your name",validators=[DataRequired()])
@@ -33,3 +35,8 @@ class LoginForm(FlaskForm):
 class SearchForm(FlaskForm):
     searched=StringField("Searched",validators=[DataRequired()])
     Submit=SubmitField("Submit")
+class PhotosForm(FlaskForm):
+    Name=StringField("Name of photo",validators=[DataRequired()])
+    Description=StringField("Description of photo",validators=[DataRequired()])
+    Photo=FileField("",validators=[FileRequired(),FileAllowed(IMAGES,'Only IMAGES allows!')])
+    Submit = SubmitField('Uploads')
