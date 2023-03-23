@@ -2,10 +2,11 @@ from flask import render_template,request,flash,redirect,url_for
 from apps.models.user import User,create_,update_,delete_,create_post_,show_post_,show_post_id,Posts,edit_post_id,check_password_hash,Photos
 from apps.views.form import NewUserForm,PostForm,LoginForm,PhotosForm
 from flask_sqlalchemy import query
-from .. import db,login_manager,app,photos
+from .. import db,login_manager,app,allowed_file
 from flask_uploads import UploadSet,configure_uploads,IMAGES
 from flask_login import login_user,LoginManager,login_required,logout_user,current_user
-
+from werkzeug.utils import secure_filename
+import os,uuid
 
 class views:
     
@@ -131,24 +132,62 @@ class views:
             flash("You can't delete the post,you are not the author!!!!!")
             posts=Posts.query.order_by(Posts.date_posted).all()
             return render_template("user/show-post.html",posts=posts)
-    @staticmethod
-    def Upload_photo():
-        upload_photos=Photos.query.order_by(Photos.id) 
-        form=PhotosForm()
-        if request.method=='POST':
-            Name=form.Name.data
-            Description=form.Description.data
-            Filename=photos.save(request.files['photo'])
-            Image_path=photos.url(Filename)
-            photo=Photos(Name=Name,Description=Description,Filename=Filename,Image_path=Image_path)
-            db.session.add(photo)
-            db.session.commit()
-            flash("Upload successfully!!!!")
-            return redirect(url_for("upload_photos"))
+    # def Upload_photo():
+    #     upload_photos=Photos.query.order_by(Photos.id) 
+    #     form=PhotosForm()
+    #     if form.validate_on_submit():
+    #         Name=form.Name.data
+    #         Description=form.Description.data
+    #         Filename=images.save(form.Photo.data)
+    #         Image_path=images.url(Filename)
+    #         photo=Photos(Name=Name,Description=Description,Filename=Filename,Image_path=Image_path)
+    #         db.session.add(photo)
+    #         db.session.commit()
+    #         flash("Upload successfully!!!!")
+    #         return redirect(url_for("dashboard"))
            
-        return render_template("user/upload_image.html",form=form,upload_photos=upload_photos)     
+    #     return render_template("user/upload_image.html",form=form,upload_photos=upload_photos)     
         
-            
+    def Upload_photo():
+        form=PhotosForm()
+        if form.validate_on_submit():
+            Name=form.Name.data
+            photo=form.Photo.data
+            Description=form.Description.data
+            if allowed_file(photo.filename):
+                photoer= current_user.id
+                Filename=str(uuid.uuid4())+secure_filename(photo.filename) #secure_filename只能將當按名的特殊符號去除
+                photo.save(os.path.join(app.config['UPLOAD_FOLDER'],Filename))
+                photo=Photos(Name=Name,Description=Description,Filename=Filename,photoer_id=photoer)
+                db.session.add(photo)
+                db.session.commit()
+                flash('Photo upload successfully!!!')
+                Image_path=url_for('view_photo',photo_id=photo.id)
+                return redirect(url_for("view_photo"))
+        return render_template('user/upload_image.html',form=form)
+    def Delete_photo_id(id):
+        photo_to_delete=Photos.query.get_or_404(id)
+        if current_user.id==photo_to_delete.photoer.id:
+            try:
+                filename=photo_to_delete.Filename
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+                db.session.delete(photo_to_delete)
+                db.session.commit()
+                flash("Photo delete successfully!!")
+                photos=Photos.query.order_by(Photos.id).all()
+                return render_template('user/show_photos.html',photos=photos)
+            except Exception as e:
+                print(e)
+                flash("Somthing wrong with delete photo")
+                photos=Photos.query.order_by(Photos.Upload_time).all()
+                return render_template("user/show-post.html",photos=photos)
+        else:
+            photos=Photos.query.order_by(Photos.Upload_time).all()
+            flash("You're not yhe author of this photo you can not delete photo!!!!")
+            return  render_template("user/show-post.html",photos=photos)
+
+
+
        
 
             

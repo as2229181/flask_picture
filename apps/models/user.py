@@ -14,6 +14,7 @@ class User(db.Model,UserMixin):
     password_hash= db.Column(db.String(128),unique=True,nullable=False)
     #user can have many post
     posts=db.relationship("Posts",backref='poster')#psoter like a fake Column
+    photos=db.relationship("Photos",backref='photoer')
     @property#將函式變成只能讀取的特性，不能更新或式刪除
     def password(self):
         raise AttributeError('Password is not a readable attribute! ')
@@ -85,4 +86,5 @@ class Photos(db.Model):
     Filename=db.Column(db.String(128),nullable=False)
     Description=db.Column(db.String(500),nullable=False)
     Upload_time=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
-    Image_path=db.Column(db.String(100),nullable=False)
+    photoer_id=db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False,default=None)
+    

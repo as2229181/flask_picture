@@ -1,10 +1,12 @@
-from apps import app
+from apps import app,db
 from apps.views.form import PasswordForm,PostForm,SearchForm
 from apps.views.user import views
-from flask import render_template,flash,request,redirect,url_for
+from flask import render_template,flash,request,redirect,url_for,send_from_directory
 from apps.models.user import User,check_password_hash,create_post_
 from flask_login import login_required,logout_user,current_user
-from apps.models.user import Posts
+from apps.models.user import Posts,Photos
+from apps import logger
+
 
 
 
@@ -134,6 +136,7 @@ def delete_post_id(id):
 
 
 @app.route("/photo_uploads",methods=["GET","POST"])
+@login_required
 def upload_photos():
     return views.Upload_photo()
 
@@ -148,8 +151,34 @@ def admin():# 只能給superuser使用的頁面 去管理使用者?
         return redirect(url_for("dashboard"))
 
 
+@app.route('/photo/<int:photo_id>')
+@login_required
+def view_photo_id(photo_id):
+    photo=Photos.query.filter_by(id=photo_id).first()
+    if not photo:
+        return render_template('error/404.html'),404
+    return render_template('user/show_photo.html',photo=photo)
 
 
+
+@app.route("/photo/delete/<int:id>",methods=["GET","POST"])
+@login_required
+def photo_delete_id(id):
+    return views.Delete_photo_id(id)
+    
+
+
+
+
+@app.route("/photo")
+@login_required
+def view_photo():
+    photos=Photos.query.order_by(Photos.id).all()
+    return render_template("user/show_photos.html",photos=photos)
+
+
+
+ 
 
 
     
@@ -163,6 +192,16 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("error/500.html"),500
+@app.route('/logger')
+def my_logger():
+    # 使用 logger 記錄日誌
+    logger.debug('This is a debug message.')
+    logger.info('This is an info message.')
+    logger.warning('This is a warning message.')
+    logger.error('This is an error message.')
+    logger.critical('This is a critical message.')
+    return 'Hello, World!'
+
 
 if __name__ == "__main__":
     app.run(debug=True)
